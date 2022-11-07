@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ChatServer {
-    public final static int SERVER_PORT = 66;////192.168.100.106
+    public final static int SERVER_PORT = 66;////10.10.10.59
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
@@ -16,7 +16,7 @@ public class ChatServer {
                     Socket socket = serverSocket.accept();
                     System.out.println("Client accepted: " + socket);
                     ChatThread thread = new ChatThread(socket);
-                    thread.run();
+                    thread.start();
                 } catch (IOException e) {System.err.println(" Connection Error: " + e);}
             }
         } catch (IOException e1) {e1.printStackTrace();
