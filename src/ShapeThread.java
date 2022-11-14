@@ -1,13 +1,13 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class TestThread extends Thread {
+public class ShapeThread extends Thread {
     Socket socket;
 
-    public TestThread(Socket socket) {
+    public ShapeThread(Socket socket) {
         this.socket = socket;
     }
-//10.10.11.66
 
     public String acceptFromClient() throws IOException {
         OutputStream os = socket.getOutputStream();
@@ -36,17 +36,42 @@ public class TestThread extends Thread {
     public void sendRequestToServer(String ip) throws IOException {
         Socket sk = null;
         DataOutputStream ot = null;
-        DataInputStream b = null;
+        BufferedReader b = null;
         try {
             System.out.println("Send request to:" + ip + " ...");
             sk = new Socket(ip, 100);
             System.out.println("Connected: " + sk);
             ot = new DataOutputStream(sk.getOutputStream());
-            ot.writeUTF("1 34 5 28 2 93 109 238 12 4792 402");
-            b = new DataInputStream(sk.getInputStream());
+            int v1 = ThreadLocalRandom.current().nextInt(2, 30);
+            ot.writeUTF("VUONG " + v1);
+            System.out.println("Request: VUONG " + v1);
+            b = new BufferedReader(new InputStreamReader(sk.getInputStream()));
             String l;
-            while (!(l = b.readUTF()).equalsIgnoreCase("quit")) {
-                System.out.println("Result:" + l);
+            while (!(l = b.readLine()).equalsIgnoreCase("q")) {
+                System.out.println(l);
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            int height = ThreadLocalRandom.current().nextInt(2, 30);
+            int width = ThreadLocalRandom.current().nextInt(2, 30);
+            ot.writeUTF("CHUNHAT " + height + " " + width);
+            System.out.println("Request: CHUNHAT " + height + " " + width);
+            while (!(l = b.readLine()).equalsIgnoreCase("q")) {
+                System.out.println(l);
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            int radius = ThreadLocalRandom.current().nextInt(2, 30);
+            ot.writeUTF("TRON " + radius);
+            System.out.println("Request: TRON " + radius);
+            while (!(l = b.readLine()).equalsIgnoreCase("q")) {
+                System.out.println(l);
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -66,13 +91,13 @@ public class TestThread extends Thread {
             }
         }
     }
-        @Override
-        public void run () {
-            try {
-                String ip = acceptFromClient();
-                sendRequestToServer(ip);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    @Override
+    public void run () {
+        try {
+            String ip = acceptFromClient();
+            sendRequestToServer(ip);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+}
