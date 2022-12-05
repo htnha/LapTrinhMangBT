@@ -26,6 +26,7 @@ public class Tong15ClientTest {
                     OutputStream os = socket.getOutputStream();
                     DataOutputStream dt = new DataOutputStream(os);
                     dt.writeUTF(num1 + " " + num2);
+                    dt.flush();
                     System.out.println(num1 + " " + num2);
                     DataInputStream di = new DataInputStream(is);
                     System.out.println(di.readUTF());
